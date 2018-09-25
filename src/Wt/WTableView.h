@@ -135,6 +135,10 @@ public:
 
   virtual EventSignal<WScrollEvent>& scrolled() override;
 
+  void setPreloadRows(int );
+
+  void setPreloadMultiplication(int );
+
  protected:
   virtual void render(WFlags<RenderFlag> flags) override;
 
@@ -194,6 +198,8 @@ private:
   int scrollToRow_;
   ScrollHint scrollToHint_;
   bool columnResizeConnected_;
+
+  int preloadRows_, preloadMultiplication_;
 
   void updateTableBackground();
 
