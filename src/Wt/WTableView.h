@@ -135,6 +135,14 @@ public:
 
   virtual EventSignal<WScrollEvent>& scrolled() override;
 
+  /*! \brief Set the preloaded rows. The default value is 5.
+  */
+  void setPreloadRows(int );
+
+  /*! \brief Set the multiplication number of back buffer. The default value is 5.
+  */
+  void setPreloadMultiplication(int );
+
  protected:
   virtual void render(WFlags<RenderFlag> flags) override;
 
@@ -194,6 +202,8 @@ private:
   int scrollToRow_;
   ScrollHint scrollToHint_;
   bool columnResizeConnected_;
+
+  int preloadRows_, preloadMultiplication_;
 
   void updateTableBackground();
 

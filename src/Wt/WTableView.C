@@ -64,7 +64,9 @@ WTableView::WTableView()
     viewportHeight_(UNKNOWN_VIEWPORT_HEIGHT),
     scrollToRow_(-1),
     scrollToHint_(ScrollHint::EnsureVisible),
-    columnResizeConnected_(false)
+    columnResizeConnected_(false),
+    preloadRows_(5),
+    preloadMultiplication_(2)
 {
   setSelectable(false);
 
@@ -1629,7 +1631,6 @@ void WTableView::onColumnResize()
 void WTableView::computeRenderedArea()
 {
   if (ajaxMode()) {
-    const int borderRows = 5;
     const int borderColumnPixels = 200;
 
     int modelHeight = 0;
@@ -1650,16 +1651,16 @@ void WTableView::computeRenderedArea()
       renderedFirstRow_ = static_cast<int>(top / rowHeight().toPixels());
 
       renderedLastRow_
-	= std::min(renderedFirstRow_ + renderedRows * 2 + borderRows,
+	= std::min(renderedFirstRow_ + renderedRows * preloadMultiplication_ + preloadRows_,
 		   modelHeight - 1);
       renderedFirstRow_
-	= std::max(renderedFirstRow_ - renderedRows - borderRows, 0);
+	= std::max(renderedFirstRow_ - renderedRows - preloadRows_, 0);
     } else {
       renderedFirstRow_ = 0;
       renderedLastRow_ = modelHeight - 1;
     }
 
-    if (renderedFirstRow_ % 2 == 1)
+    if (renderedFirstRow_ % preloadMultiplication_ == 1)
       --renderedFirstRow_;
 
     /* column range */
@@ -1838,6 +1839,17 @@ WModelIndex WTableView::modelIndexAt(WWidget *widget) const
   }
 
   return WModelIndex();
+}
+
+
+void WTableView::setPreloadRows(int size )
+{
+  preloadRows_ = size;
+}
+
+void WTableView::setPreloadMultiplication(int multiplication)
+{
+  preloadMultiplication_ = multiplication;
 }
 
 WModelIndex WTableView::translateModelIndex(bool headerColumns,
